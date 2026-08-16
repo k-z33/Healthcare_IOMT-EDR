@@ -1,0 +1,68 @@
+services:
+  cassandra:
+    image: cassandra:4.0
+    restart: always
+    environment:
+      - CASSANDRA_START_RPC=true
+      - CASSANDRA_CLUSTER_NAME=thehive
+      - MAX_HEAP_SIZE=1G
+      - HEAP_NEWSIZE=256M
+    volumes:
+      - thehive_cassandra-data:/var/lib/cassandra
+    networks:
+      - thehive-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 20s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+
+  thehive:
+    image: strangebee/thehive:5.2
+    restart: always
+    depends_on:
+      - cassandra
+    ports:
+      - "9000:9000"
+    environment:
+      - THEHIVE_CASSANDRA_HOSTNAME=cassandra
+      - JAVA_OPTS=-Xms1g -Xmx1g
+    command:
+      - --cortex-hostnames
+      - cortex
+      - --cortex-port
+      - "9001"
+      - --cortex-keys
+      - uwrkeLIDMpJH7KAhqfsj0MdZv74M0fkp
+    volumes:
+      - thehive_thehive-data:/data
+    networks:
+      - thehive-net
+
+  cortex:
+    image: thehiveproject/cortex:3.1.7
+    restart: always
+    ports:
+      - "9001:9001"
+    environment:
+      - job_directory=/tmp/cortex-jobs
+      - docker_job_directory=/home/ubuntu/healthcare-edr/thehive_standalone/cortex-jobs
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./cortex-jobs:/tmp/cortex-jobs
+      - cortex_data:/var/db/cortex
+      - ./cortex-config/application.conf:/etc/cortex/application.conf
+      - /opt/cortex-analyzers:/opt/cortex-analyzers
+    networks:
+      - thehive-net
+
+networks:
+  thehive-net:
+    driver: bridge
+
+volumes:
+  thehive_cassandra-data:
+  thehive_es-data:
+  thehive_thehive-data:
+  cortex_data:

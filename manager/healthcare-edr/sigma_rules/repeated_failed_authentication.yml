@@ -1,0 +1,30 @@
+title: Unauthorized Infusion Pump Configuration Change
+id: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+status: experimental
+description: |
+  Detects an unauthorized or unrecognized configuration change on an
+  infusion pump, which could indicate tampering with dosage/delivery
+  parameters. CVSS v3.1 Base Score: 9.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+  - Critical, due to direct dosing/patient-safety implications.
+author: Kainat Zahra
+date: 2026/08/10
+references:
+  - HIPAA 45 CFR 164.308(a)(6) (Security Incident Procedures - Patient Safety)
+  - HIPAA 45 CFR 164.312(c)(1) (Integrity)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'infusion pump'
+  condition: selection
+falsepositives:
+  - Authorized dosage adjustment by clinical staff logged through the
+    approved change-control workflow
+level: critical
+tags:
+  - attack.impact
+  - attack.t0836
+  - healthcare.iomt
+  - healthcare.patient-safety
+  - healthcare.hipaa

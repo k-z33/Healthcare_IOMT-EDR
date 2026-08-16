@@ -1,0 +1,29 @@
+title: TLS/Certificate Validation Failure
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f38
+status: experimental
+description: |
+  Detects a TLS/certificate validation failure on a clinical connection,
+  which may indicate a man-in-the-middle attempt or an expired/misconfigured
+  certificate exposing data in transit. CVSS v3.1 Base Score: 5.9
+  (AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N) - Medium.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(e)(1) (Transmission Security)
+  - Wazuh rule 100238 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'TLS/certificate validation failed'
+  condition: selection
+falsepositives:
+  - Certificate expired due to a missed renewal, with no malicious activity
+    involved
+level: medium
+tags:
+  - attack.credential_access
+  - attack.t1040
+  - healthcare.iomt
+  - healthcare.hipaa

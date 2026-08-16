@@ -1,0 +1,27 @@
+title: Repeated Failed Authentication on Medical Device
+id: 3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f
+status: experimental
+description: |
+  Detects repeated failed authentication attempts against a medical device
+  or clinical system, consistent with brute-force or credential-guessing
+  activity. CVSS v3.1 Base Score: 6.5 (AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N)
+  - Medium.
+author: Kainat Zahra
+date: 2026/08/10
+references:
+  - HIPAA 45 CFR 164.312(d) (Person/Entity Authentication)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'failed authentication'
+  condition: selection
+falsepositives:
+  - Clinical staff member locked out after a genuine forgotten password
+level: medium
+tags:
+  - attack.credential_access
+  - attack.t1110
+  - healthcare.iomt
+  - healthcare.hipaa

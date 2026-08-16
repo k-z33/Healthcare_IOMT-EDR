@@ -1,0 +1,29 @@
+title: Rogue or Unregistered Device Detected on Clinical Network
+id: 4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a
+status: experimental
+description: |
+  Detects a device joining the clinical/IoMT network segment that is not
+  present in the known-device inventory, indicating a possible rogue
+  device or unauthorized network access. CVSS v3.1 Base Score: 8.1
+  (AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N) - High.
+author: Kainat Zahra
+date: 2026/08/10
+references:
+  - HIPAA 45 CFR 164.312(d) (Person/Entity Authentication)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'rogue device'
+  condition: selection
+falsepositives:
+  - Newly provisioned device not yet added to the asset inventory by
+    biomedical engineering
+level: high
+tags:
+  - attack.initial_access
+  - attack.t1200
+  - healthcare.iomt
+  - healthcare.hipaa
+  - healthcare.vendor-risk

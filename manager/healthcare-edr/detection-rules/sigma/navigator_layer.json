@@ -1,0 +1,127 @@
+{
+  "name": "IoMT EDR Coverage",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Coverage map of IoMT EDR Sigma rules",
+  "techniques": [
+    {
+      "techniqueID": "T0814",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T0816",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T0836",
+      "score": 3,
+      "comment": "3 rule(s)"
+    },
+    {
+      "techniqueID": "T1021",
+      "score": 2,
+      "comment": "2 rule(s)"
+    },
+    {
+      "techniqueID": "T1030",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1040",
+      "score": 2,
+      "comment": "2 rule(s)"
+    },
+    {
+      "techniqueID": "T1046",
+      "score": 3,
+      "comment": "3 rule(s)"
+    },
+    {
+      "techniqueID": "T1070",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1071",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1078",
+      "score": 2,
+      "comment": "2 rule(s)"
+    },
+    {
+      "techniqueID": "T1110",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1195",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1200",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1499",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1537",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1552",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1557",
+      "score": 3,
+      "comment": "3 rule(s)"
+    },
+    {
+      "techniqueID": "T1565",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1571",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T1595",
+      "score": 1,
+      "comment": "1 rule(s)"
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#66b1ff",
+      "#1a5276"
+    ],
+    "minValue": 0,
+    "maxValue": 3
+  },
+  "legendItems": [
+    {
+      "label": "Covered",
+      "color": "#66b1ff"
+    }
+  ]
+}

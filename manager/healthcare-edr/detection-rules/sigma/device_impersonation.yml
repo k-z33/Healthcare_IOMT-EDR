@@ -1,0 +1,29 @@
+title: Possible Medical Device Impersonation Detected
+id: 5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b
+status: experimental
+description: |
+  Detects indicators consistent with one device impersonating another
+  trusted medical device on the network (e.g., spoofed identifier),
+  which could be used to intercept or manipulate clinical data in
+  transit. CVSS v3.1 Base Score: 8.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N)
+  - High.
+author: Kainat Zahra
+date: 2026/08/10
+references:
+  - HIPAA 45 CFR 164.312(e)(1) (Transmission Security)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'impersonation'
+  condition: selection
+falsepositives:
+  - Device replaced during maintenance and re-provisioned with the same
+    identifier before the old entry was retired from inventory
+level: high
+tags:
+  - attack.collection
+  - attack.t1557
+  - healthcare.iomt
+  - healthcare.hipaa

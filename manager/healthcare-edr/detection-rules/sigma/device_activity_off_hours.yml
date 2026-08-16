@@ -1,0 +1,28 @@
+title: Device Activity Outside Normal Operating Hours
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f04
+status: experimental
+description: |
+  Detects IoMT device activity occurring outside normal clinical operating
+  hours, which may indicate unauthorized access or compromised device
+  automation. CVSS v3.1 Base Score: 3.7
+  (AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) - Low.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(b) (Audit Controls)
+  - Wazuh rule 100204 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'outside normal operating hours'
+  condition: selection
+falsepositives:
+  - Overnight maintenance window, or a 24/7 critical-care device with
+    continuous legitimate activity
+level: low
+tags:
+  - healthcare.iomt
+  - healthcare.hipaa
+  - healthcare.anomaly

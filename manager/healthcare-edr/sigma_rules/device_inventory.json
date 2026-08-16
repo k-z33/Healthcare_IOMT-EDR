@@ -1,0 +1,38 @@
+{
+  "_comment": "Vendor/third-party device inventory for HIPAA Business Associate risk tracking. Add one entry per device_id seen in Wazuh alerts. last_patch_date drives the 90-day staleness check in the compliance report.",
+  "infusion-pump-03": {
+    "vendor": "MedFlow Systems",
+    "model": "MF-2200i",
+    "firmware_version": "3.4.1",
+    "last_patch_date": "2026-03-15",
+    "business_associate_agreement": true
+  },
+  "pharmacy-cabinet-01": {
+    "vendor": "SecureDose Inc.",
+    "model": "SD-Cabinet-500",
+    "firmware_version": "2.1.0",
+    "last_patch_date": "2025-11-02",
+    "business_associate_agreement": true
+  },
+  "dental-xray-01": {
+    "vendor": "RadiantImaging Co.",
+    "model": "RI-DX400",
+    "firmware_version": "1.9.3",
+    "last_patch_date": "2026-01-20",
+    "business_associate_agreement": false
+  },
+  "patient-monitor-07": {
+    "vendor": "VitalTrack Medical",
+    "model": "VT-M700",
+    "firmware_version": "4.0.2",
+    "last_patch_date": "2026-06-01",
+    "business_associate_agreement": true
+  },
+  "ventilator-02": {
+    "vendor": "PulmoCare Devices",
+    "model": "PC-V900",
+    "firmware_version": "5.2.0",
+    "last_patch_date": "2026-05-10",
+    "business_associate_agreement": true
+  }
+}

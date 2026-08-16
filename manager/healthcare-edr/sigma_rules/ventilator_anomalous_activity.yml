@@ -1,0 +1,30 @@
+title: Ventilator Anomalous Activity Detected
+id: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+status: experimental
+description: |
+  Detects anomalous behavior on a patient ventilator (unexpected reboot,
+  configuration change, or unauthorized command), which carries direct
+  patient-safety risk in addition to a security risk. CVSS v3.1 Base
+  Score: 9.1 (AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:H/A:H) - Critical, adjusted
+  upward from a purely technical score due to patient-safety impact.
+author: Kainat Zahra
+date: 2026/08/10
+references:
+  - HIPAA 45 CFR 164.308(a)(6) (Security Incident Procedures - Patient Safety)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'ventilator'
+  condition: selection
+falsepositives:
+  - Planned maintenance reboot performed by biomedical engineering with a
+    documented change ticket
+level: critical
+tags:
+  - attack.impact
+  - attack.t0836
+  - healthcare.iomt
+  - healthcare.patient-safety
+  - healthcare.hipaa

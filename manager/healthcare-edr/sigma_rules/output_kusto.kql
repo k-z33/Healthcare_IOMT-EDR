@@ -1,0 +1,11 @@
+'rule.description' contains "impersonation"
+
+'rule.description' contains "dicom"
+
+'rule.description' contains "infusion pump"
+
+'rule.description' contains "failed authentication"
+
+'rule.description' contains "rogue device"
+
+'rule.description' contains "ventilator"

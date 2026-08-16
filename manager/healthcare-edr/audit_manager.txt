@@ -1,0 +1,115 @@
+==================================================================
+SECURITY AUDIT SCAN — ip-172-31-44-154 — 2026-08-13 20:21 UTC
+==================================================================
+
+--- [1] CREDENTIAL HYGIENE ---
+>> Hardcoded passwords/secrets in project files (excludes .git, venv, node_modules):
+/home/ubuntu/exam-edr-project/thehive_integration.py
+/home/ubuntu/exam-edr-project/file_reputation.py
+/home/ubuntu/healthcare-edr/config/wazuh_dashboard/wazuh.yml
+
+>> File permissions on sensitive files (.env, .pem, credentials):
+
+>> World-readable sensitive files (permission mode ends in non-0):
+
+--- [2] NETWORK EXPOSURE ---
+>> Listening ports and bind addresses (0.0.0.0 = internet-reachable if SG allows):
+Netid State  Recv-Q Send-Q         Local Address:Port  Peer Address:PortProcess
+udp   UNCONN 0      0                 127.0.0.54:53         0.0.0.0:*          
+udp   UNCONN 0      0              127.0.0.53%lo:53         0.0.0.0:*          
+udp   UNCONN 0      0      172.31.44.154%enp39s0:68         0.0.0.0:*          
+udp   UNCONN 0      0                  127.0.0.1:323        0.0.0.0:*          
+udp   UNCONN 0      0                    0.0.0.0:514        0.0.0.0:*          
+udp   UNCONN 0      0                      [::1]:323           [::]:*          
+udp   UNCONN 0      0                       [::]:514           [::]:*          
+tcp   LISTEN 0      4096           127.0.0.53%lo:53         0.0.0.0:*          
+tcp   LISTEN 0      4096              127.0.0.54:53         0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:1514       0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:1515       0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:55000      0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:22         0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:443        0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:9000       0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:9001       0.0.0.0:*          
+tcp   LISTEN 0      4096                 0.0.0.0:9200       0.0.0.0:*          
+tcp   LISTEN 0      4096                    [::]:1514          [::]:*          
+tcp   LISTEN 0      4096                    [::]:1515          [::]:*          
+tcp   LISTEN 0      4096                    [::]:55000         [::]:*          
+tcp   LISTEN 0      4096                    [::]:22            [::]:*          
+tcp   LISTEN 0      4096                    [::]:443           [::]:*          
+tcp   LISTEN 0      4096                    [::]:9000          [::]:*          
+tcp   LISTEN 0      4096                    [::]:9001          [::]:*          
+tcp   LISTEN 0      4096                    [::]:9200          [::]:*          
+
+>> Current public IP (for cross-checking security group rules):
+
+
+--- [3] TLS / ENCRYPTION ---
+>> Code using verify=False or curl -k (disabled TLS verification):
+/home/ubuntu/healthcare-edr/master_package/scripts/deploy_sigma_monitors.py:123:            verify=False,
+/home/ubuntu/healthcare-edr/detection-rules/scripts/deploy_sigma_monitors.py:124:            verify=False,
+/home/ubuntu/healthcare-edr/misp_integration.py:26:            verify=False,
+/home/ubuntu/healthcare-edr/misp_integration.py:63:            verify=False
+/home/ubuntu/healthcare-edr/config/edr_orchestrator.py:105:            verify=False,
+/home/ubuntu/healthcare-edr/config/edr_orchestrator.py:123:        verify=False,
+/home/ubuntu/healthcare-edr/security_audit_scan.sh
+
+>> Self-signed cert check on local services (if applicable):
+Port 9200 is listening — checking cert...
+subject=C=US, L=California, O=Wazuh, OU=Wazuh, CN=wazuh.indexer
+issuer=OU=Wazuh, O=Wazuh, L=California
+notBefore=May 21 19:15:22 2026 GMT
+notAfter=May 18 19:15:22 2036 GMT
+Port 9000 is listening — checking cert...
+Port 9001 is listening — checking cert...
+
+--- [4] ACCESS CONTROL ---
+>> SSH authorized_keys count + permissions:
+-rw------- 1 ubuntu ubuntu 399 Aug  3 08:51 /home/ubuntu/.ssh/authorized_keys
+1 /home/ubuntu/.ssh/authorized_keys
+
+>> SSH config — password auth / root login status:
+
+>> Sudo access for current user:
+User ubuntu may run the following commands on ip-172-31-44-154:
+    (ALL : ALL) ALL
+    (ALL) NOPASSWD: ALL
+
+--- [5] OS PATCH STATUS ---
+>> Kernel version:
+Linux ip-172-31-44-154 7.0.0-1010-aws #10-Ubuntu SMP PREEMPT Thu Jul 23 02:06:04 UTC 2026 x86_64 GNU/Linux
+
+>> Pending security updates:
+0
+(total upgradable packages, all types):
+39
+
+--- [6] DOCKER SECURITY ---
+>> Running containers + port bindings:
+NAMES                              PORTS                                                                                                                                                                 STATUS
+thehive_standalone-cortex-1        0.0.0.0:9001->9001/tcp, [::]:9001->9001/tcp                                                                                                                           Up 27 minutes
+thehive_standalone-thehive-1       0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp                                                                                                                           Up 27 minutes
+thehive_standalone-cassandra-1                                                                                                                                                                           Restarting (100) 25 seconds ago
+healthcare-edr-wazuh.manager-1     0.0.0.0:1514-1515->1514-1515/tcp, [::]:1514-1515->1514-1515/tcp, 0.0.0.0:514->514/udp, [::]:514->514/udp, 0.0.0.0:55000->55000/tcp, [::]:55000->55000/tcp, 1516/tcp   Up 27 minutes
+healthcare-edr-wazuh.dashboard-1   443/tcp, 0.0.0.0:443->5601/tcp, [::]:443->5601/tcp                                                                                                                    Up 27 minutes
+healthcare-edr-wazuh.indexer-1     0.0.0.0:9200->9200/tcp, [::]:9200->9200/tcp                                                                                                                           Up 27 minutes
+
+>> Containers running as root (UID 0):
+thehive_standalone-cortex-1 -> UID 0
+thehive_standalone-thehive-1 -> UID 1000
+thehive_standalone-cassandra-1 -> UID 
+healthcare-edr-wazuh.manager-1 -> UID 0
+healthcare-edr-wazuh.dashboard-1 -> UID 1000
+healthcare-edr-wazuh.indexer-1 -> UID 1000
+
+--- [7] LOG / EVIDENCE INTEGRITY ---
+>> World-writable files in project directory (tamper risk):
+
+>> Log files permissions:
+-rw-rw-r-- 1 ubuntu ubuntu 1114 Aug 12 12:56 /home/ubuntu/healthcare-edr/logs/edr_events.jsonl
+-rw-rw-r-- 1 ubuntu ubuntu   120 Aug 13 14:35 /home/ubuntu/healthcare-edr/real_ml_predictions.jsonl
+-rw-rw-r-- 1 ubuntu ubuntu 28422 Aug 13 11:42 /home/ubuntu/healthcare-edr/soc_metrics.jsonl
+
+==================================================================
+SCAN COMPLETE
+==================================================================

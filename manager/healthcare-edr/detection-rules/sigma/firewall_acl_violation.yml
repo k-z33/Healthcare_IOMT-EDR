@@ -1,0 +1,29 @@
+title: Firewall/ACL Violation (Blocked Attempt)
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f40
+status: experimental
+description: |
+  Detects a connection attempt from a medical device that was blocked by the
+  firewall/ACL. Lower-severity signal tracked for trend monitoring and
+  reconnaissance escalation. CVSS v3.1 Base Score: 3.1
+  (AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N) - Low.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(b) (Audit Controls)
+  - Wazuh rule 100240 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'Firewall blocked connection attempt'
+  condition: selection
+falsepositives:
+  - Newly deployed service whose firewall rule has not yet been added,
+    generating expected blocks during rollout
+level: low
+tags:
+  - attack.discovery
+  - attack.t1046
+  - healthcare.iomt
+  - healthcare.hipaa

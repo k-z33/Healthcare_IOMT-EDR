@@ -1,0 +1,27 @@
+title: Imaging Device Anomalous Activity
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f18
+status: experimental
+description: |
+  Detects anomalous network activity on an imaging device (X-ray/CBCT/PACS-
+  connected), which may indicate DICOM data tampering or unauthorized access
+  to imaging data. CVSS v3.1 Base Score: 6.5
+  (AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N) - Medium.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(c)(1) (Integrity)
+  - Wazuh rule 100218 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'Imaging device'
+  condition: selection
+falsepositives:
+  - Bulk image transfer to an approved PACS archive during a scheduled
+    retention job
+level: medium
+tags:
+  - healthcare.iomt
+  - healthcare.hipaa

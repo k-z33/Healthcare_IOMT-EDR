@@ -1,0 +1,89 @@
+<!--
+iomt_network_security_rules.xml  (Manager machine — AWS, load alongside
+iomt_custom_rules.xml, NOT a replacement for it)
+
+Rules matching the 8 concepts in network_security_extensions.py.
+Rule ID range: 100226-100235 (chosen to continue after the 25 rules
+already in iomt_custom_rules.xml, which end at 100225).
+-->
+
+<group name="iomt_netsec,">
+
+  <!-- 1: ARP spoofing / MITM -->
+  <rule id="100234" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">arp_spoofing_suspected</field>
+    <description>CRITICAL: Possible ARP spoofing/MITM detected for IP $(ip), MAC mismatch</description>
+    <mitre><id>T1557</id></mitre>
+    <group>iomt_netsec,arp_spoofing,critical,</group>
+  </rule>
+
+  <!-- 2: Port scan (formalized, distinct-port-count based) -->
+  <rule id="100235" level="12">
+    <decoded_as>json</decoded_as>
+    <field name="event">port_scan_detected</field>
+    <description>Port scan detected from $(source_ip): $(distinct_ports_touched) distinct ports touched</description>
+    <mitre><id>T1046</id></mitre>
+    <group>iomt_netsec,port_scan,</group>
+  </rule>
+
+  <!-- 3: Rogue / unauthorized device -->
+  <rule id="100236" level="12">
+    <decoded_as>json</decoded_as>
+    <field name="event">rogue_device_detected</field>
+    <description>Unregistered/rogue device detected on network: $(device_id)</description>
+    <mitre><id>T1200</id></mitre>
+    <group>iomt_netsec,rogue_device,</group>
+  </rule>
+
+  <!-- 4: Network segmentation (zone) violation -->
+  <rule id="100237" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">zone_violation</field>
+    <description>CRITICAL: Segmentation violation, $(device_type) reached unauthorized zone $(target_zone)</description>
+    <mitre><id>T1021</id></mitre>
+    <group>iomt_netsec,zone_violation,critical,</group>
+  </rule>
+
+  <!-- 5: TLS/certificate validation failure -->
+  <rule id="100238" level="11">
+    <decoded_as>json</decoded_as>
+    <field name="event">tls_validation_failed</field>
+    <description>TLS/certificate validation failed: $(issues)</description>
+    <mitre><id>T1040</id></mitre>
+    <group>iomt_netsec,tls_failure,</group>
+  </rule>
+
+  <!-- 6: day_of_week is an ML feature, not a standalone log event, so no
+       dedicated rule is needed here. It strengthens rule 100220's
+       correlation logic and the underlying Isolation Forest model. -->
+
+  <!-- 7: Rogue DHCP server -->
+  <rule id="100239" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">rogue_dhcp_detected</field>
+    <description>CRITICAL: Rogue DHCP server detected at $(dhcp_server_ip), possible MITM setup</description>
+    <mitre><id>T1557</id></mitre>
+    <group>iomt_netsec,rogue_dhcp,critical,</group>
+  </rule>
+
+  <!-- 8: Firewall/ACL violation (blocked attempt, still worth tracking) -->
+  <rule id="100240" level="7">
+    <decoded_as>json</decoded_as>
+    <field name="event">firewall_violation</field>
+    <description>Firewall blocked connection attempt from $(device_id) to $(attempted_dest):$(attempted_port)</description>
+    <mitre><id>T1046</id></mitre>
+    <group>iomt_netsec,firewall_violation,</group>
+  </rule>
+
+  <!-- Escalation: repeated firewall violations from same device = likely
+       reconnaissance in progress, worth a higher-severity roll-up -->
+  <rule id="100241" level="12" frequency="5" timeframe="120">
+    <if_matched_sid>100240</if_matched_sid>
+    <same_field>device_id</same_field>
+    <description>Device $(device_id): repeated firewall violations, possible active reconnaissance</description>
+    <mitre><id>T1595</id></mitre>
+    <group>iomt_netsec,firewall_violation,escalation,</group>
+  </rule>
+
+</group>

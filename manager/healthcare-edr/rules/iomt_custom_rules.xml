@@ -1,0 +1,280 @@
+<!--
+iomt_custom_rules.xml  (Manager machine — AWS, load into Wazuh manager ONLY)
+
+20 rules covering realistic attack patterns against medical/IoMT devices,
+grouped by category. Reads JSON log lines from
+/var/log/iomt/medical_device.log written by simulate_medical_device.py.
+
+Rule ID range: 100200-100299 (check your existing custom rules for
+overlap before loading).
+-->
+
+<group name="iomt_extended,">
+
+  <!-- ============================================================
+       BASE RULE
+       ============================================================ -->
+  <rule id="100200" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="event">connection</field>
+    <description>IoMT device connection event logged: $(device_id)</description>
+    <group>iomt_extended,connection_log,</group>
+  </rule>
+
+  <!-- ============================================================
+       CATEGORY A — NETWORK-LEVEL ANOMALIES (generic, apply to all devices)
+       ============================================================ -->
+
+  <!-- 1: Unknown destination IP -->
+  <rule id="100201" level="10">
+    <if_sid>100200</if_sid>
+    <field name="dest_ip" negate="yes" type="pcre2">^10\.0\.0\.(5|12|20|25|40)$</field>
+    <description>Device $(device_id) connected to unknown destination IP: $(dest_ip)</description>
+    <mitre><id>T1071</id></mitre>
+    <group>iomt_extended,unknown_ip,</group>
+  </rule>
+
+  <!-- 2: Unknown/non-standard port (possible tunneling) -->
+  <rule id="100202" level="10">
+    <if_sid>100200</if_sid>
+    <field name="dest_port" negate="yes" type="pcre2">^(104|2575|8443)$</field>
+    <description>Device $(device_id) connected on unexpected port: $(dest_port)</description>
+    <mitre><id>T1571</id></mitre>
+    <group>iomt_extended,unknown_port,</group>
+  </rule>
+
+  <!-- 3: Data volume spike (possible exfiltration) -->
+  <rule id="100203" level="10">
+    <if_sid>100200</if_sid>
+    <field name="bytes_sent" compare="&gt;">100000</field>
+    <description>Device $(device_id) data volume spike: $(bytes_sent) bytes</description>
+    <mitre><id>T1030</id></mitre>
+    <group>iomt_extended,data_volume_spike,</group>
+  </rule>
+
+  <!-- 4: Activity at unexpected hour -->
+  <rule id="100204" level="8">
+    <if_sid>100200</if_sid>
+    <field name="hour_of_day" compare="&gt;">22</field>
+    <description>Device $(device_id) active outside normal operating hours</description>
+    <group>iomt_extended,odd_hour,</group>
+  </rule>
+
+  <!-- 5: Abnormally high polling frequency (possible flooding/DoS) -->
+  <rule id="100205" level="11" frequency="20" timeframe="10">
+    <if_matched_sid>100200</if_matched_sid>
+    <same_field>device_id</same_field>
+    <description>Device $(device_id) sending abnormally frequent connections, possible flooding or DoS</description>
+    <mitre><id>T0814</id></mitre>
+    <group>iomt_extended,flooding,dos,</group>
+  </rule>
+
+  <!-- ============================================================
+       CATEGORY B — PROTOCOL / DEVICE-INTEGRITY ANOMALIES
+       ============================================================ -->
+
+  <!-- 6: Unauthorized firmware/update request -->
+  <rule id="100206" level="14">
+    <decoded_as>json</decoded_as>
+    <field name="event">firmware_update_request</field>
+    <description>CRITICAL: Unrecognized firmware or update request on $(device_id) from $(dest_ip)</description>
+    <mitre><id>T1195</id></mitre>
+    <group>iomt_extended,firmware_tampering,critical,</group>
+  </rule>
+
+  <!-- 7: Legacy/insecure protocol usage (Telnet/FTP instead of encrypted channel) -->
+  <rule id="100207" level="12">
+    <decoded_as>json</decoded_as>
+    <field name="event">legacy_protocol_used</field>
+    <description>Device $(device_id) using insecure legacy protocol: $(protocol)</description>
+    <mitre><id>T1552</id></mitre>
+    <group>iomt_extended,legacy_protocol,</group>
+  </rule>
+
+  <!-- 8: Default/weak credential login attempt -->
+  <rule id="100208" level="12">
+    <decoded_as>json</decoded_as>
+    <field name="event">default_credential_login</field>
+    <description>Device $(device_id) accessed using default or weak credentials</description>
+    <mitre><id>T1078</id></mitre>
+    <group>iomt_extended,default_credentials,</group>
+  </rule>
+
+  <!-- 9a: Auth failure (base) -->
+  <rule id="100209" level="5">
+    <decoded_as>json</decoded_as>
+    <field name="event">auth_failed</field>
+    <description>Device $(device_id): authentication failed</description>
+    <group>iomt_extended,auth_failed,</group>
+  </rule>
+
+  <!-- 9b: Repeated failed authentication attempts (brute force) -->
+  <rule id="100226" level="11" frequency="5" timeframe="60">
+    <if_matched_sid>100209</if_matched_sid>
+    <same_field>device_id</same_field>
+    <description>Device $(device_id): repeated failed authentication attempts, possible brute force</description>
+    <mitre><id>T1110</id></mitre>
+    <group>iomt_extended,brute_force,</group>
+  </rule>
+
+  <!-- 10: Device impersonation — MAC/IP pairing mismatch -->
+  <rule id="100210" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">mac_ip_mismatch</field>
+    <description>CRITICAL: Possible device impersonation for $(device_id), MAC and IP mismatch detected</description>
+    <mitre><id>T1557</id></mitre>
+    <group>iomt_extended,device_impersonation,critical,</group>
+  </rule>
+
+  <!-- 11: Replay attack indicator (duplicate sequence/timestamp anomaly) -->
+  <rule id="100211" level="11">
+    <decoded_as>json</decoded_as>
+    <field name="event">replay_suspected</field>
+    <description>Device $(device_id): possible replay attack detected, duplicate or out-of-sequence message</description>
+    <mitre><id>T1499</id></mitre>
+    <group>iomt_extended,replay_attack,</group>
+  </rule>
+
+  <!-- 12: Unencrypted PHI-carrying protocol observed (DICOM/HL7 without TLS) -->
+  <rule id="100212" level="9">
+    <decoded_as>json</decoded_as>
+    <field name="event">unencrypted_phi_transmission</field>
+    <description>Device $(device_id) transmitting PHI-carrying protocol without encryption</description>
+    <mitre><id>T1040</id></mitre>
+    <group>iomt_extended,unencrypted_phi,</group>
+  </rule>
+
+  <!-- 13: NTP/time-sync manipulation (undermines log integrity / forensics) -->
+  <rule id="100213" level="10">
+    <decoded_as>json</decoded_as>
+    <field name="event">time_sync_anomaly</field>
+    <description>Device $(device_id): clock or time-sync anomaly detected, may indicate log tampering</description>
+    <mitre><id>T1070</id></mitre>
+    <group>iomt_extended,time_tampering,</group>
+  </rule>
+
+  <!-- 14: Lateral movement — device on clinical VLAN reaching admin/billing subnet -->
+  <rule id="100214" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">cross_segment_access</field>
+    <description>CRITICAL: Device $(device_id) attempted to reach admin or billing network segment</description>
+    <mitre><id>T1021</id></mitre>
+    <group>iomt_extended,lateral_movement,critical,</group>
+  </rule>
+
+  <!-- ============================================================
+       CATEGORY C — DEVICE-CATEGORY-SPECIFIC (patient-safety weighted)
+       ============================================================ -->
+
+  <!-- 15: Infusion pump anomaly — highest patient-safety weight -->
+  <rule id="100215" level="14">
+    <if_sid>100201,100202,100203</if_sid>
+    <field name="device_type">infusion_pump</field>
+    <description>CRITICAL: Infusion pump $(device_id) anomalous activity, direct patient dosing risk</description>
+    <mitre><id>T0836</id></mitre>
+    <group>iomt_extended,infusion_pump,patient_safety,critical,</group>
+  </rule>
+
+  <!-- 16: Ventilator anomaly -->
+  <rule id="100216" level="14">
+    <if_sid>100201,100202,100203</if_sid>
+    <field name="device_type">ventilator</field>
+    <description>CRITICAL: Ventilator $(device_id) anomalous activity, life-support risk</description>
+    <mitre><id>T0836</id></mitre>
+    <group>iomt_extended,ventilator,patient_safety,critical,</group>
+  </rule>
+
+  <!-- 17: Patient monitor anomaly -->
+  <rule id="100217" level="12">
+    <if_sid>100201,100202,100203</if_sid>
+    <field name="device_type">patient_monitor</field>
+    <description>Patient monitor $(device_id) anomalous activity, vitals data integrity at risk</description>
+    <mitre><id>T0836</id></mitre>
+    <group>iomt_extended,patient_monitor,patient_safety,</group>
+  </rule>
+
+  <!-- 18: Imaging device anomaly (X-ray/CBCT/PACS) -->
+  <rule id="100218" level="10">
+    <if_sid>100201,100202,100203</if_sid>
+    <field name="device_type">imaging</field>
+    <description>Imaging device $(device_id) anomalous activity, possible DICOM data tampering</description>
+    <group>iomt_extended,imaging,</group>
+  </rule>
+
+  <!-- 19: Pharmacy dispensing cabinet anomaly (insider threat / diversion) -->
+  <rule id="100219" level="12">
+    <if_sid>100201,100202,100203</if_sid>
+    <field name="device_type">pharmacy_dispensing</field>
+    <description>Pharmacy dispensing cabinet $(device_id) anomalous activity, possible diversion or compromise</description>
+    <mitre><id>T1078</id></mitre>
+    <group>iomt_extended,pharmacy,insider_threat,</group>
+  </rule>
+
+  <!-- ============================================================
+       CATEGORY E — PROTOCOL-SPECIFIC (DICOM / HL7) AND DEVICE
+       MANAGEMENT INTEGRITY
+       ============================================================ -->
+
+  <!-- 21: DICOM-specific abuse — unauthorized C-STORE / image exfiltration -->
+  <rule id="100221" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">dicom_exfiltration</field>
+    <description>CRITICAL: Unauthorized DICOM image transfer detected from $(device_id), possible patient imaging data theft</description>
+    <mitre><id>T1005</id></mitre>
+    <group>iomt_extended,dicom,exfiltration,critical,</group>
+  </rule>
+
+  <!-- 22: HL7 message tampering — modified segments in transit -->
+  <rule id="100222" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">hl7_tampering</field>
+    <description>CRITICAL: HL7 message tampering detected involving $(device_id), clinical data integrity at risk</description>
+    <mitre><id>T1565</id></mitre>
+    <group>iomt_extended,hl7,tampering,critical,</group>
+  </rule>
+
+  <!-- 23: Unauthorized device reboot -->
+  <rule id="100223" level="12">
+    <decoded_as>json</decoded_as>
+    <field name="event">device_reboot</field>
+    <field name="authorized">false</field>
+    <description>Device $(device_id) rebooted without authorization, possible disruption attempt</description>
+    <mitre><id>T0816</id></mitre>
+    <group>iomt_extended,device_reboot,</group>
+  </rule>
+
+  <!-- 24: Unauthorized configuration change -->
+  <rule id="100224" level="13">
+    <decoded_as>json</decoded_as>
+    <field name="event">config_change</field>
+    <field name="authorized">false</field>
+    <description>CRITICAL: Unauthorized configuration change on $(device_id): $(changed_setting)</description>
+    <mitre><id>T0836</id></mitre>
+    <group>iomt_extended,config_tampering,critical,</group>
+  </rule>
+
+  <!-- 25: Unauthorized network reconnaissance / scanning from or toward a device -->
+  <rule id="100225" level="11">
+    <decoded_as>json</decoded_as>
+    <field name="event">network_scan_detected</field>
+    <description>Possible network reconnaissance/scanning activity involving $(device_id)</description>
+    <mitre><id>T1046</id></mitre>
+    <group>iomt_extended,network_scan,</group>
+  </rule>
+
+
+
+  <!-- ============================================================
+       CATEGORY F — CORRELATION / ESCALATION
+       ============================================================ -->
+
+  <!-- 20 (final): Multiple distinct anomaly types on same device within window
+       = high-confidence compromise, escalate to isolation -->
+  <rule id="100220" level="15" frequency="2" timeframe="30">
+    <if_matched_sid>100201</if_matched_sid>
+    <same_field>device_id</same_field>
+    <description>CRITICAL: Device $(device_id) showing multiple anomaly indicators within 30s, isolate immediately</description>
+    <group>iomt_extended,device_isolated,critical,</group>
+  </rule>
+
+</group>

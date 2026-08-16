@@ -1,0 +1,13 @@
+{
+  "model": "IsolationForest",
+  "type": "Unsupervised",
+  "variant": "IoMT (11 features)",
+  "n_estimators": 200,
+  "contamination": 0.05,
+  "training_samples": 10500,
+  "normal_accuracy": 90.6,
+  "attack_accuracy": 100.0,
+  "trained_at": "2026-08-08T17:33:40.800209+00:00",
+  "threshold_note": "score < -0.1 = anomaly, < -0.3 = critical",
+  "use_case": "Unknown IoMT threat detection \u2014 no labels needed"
+}

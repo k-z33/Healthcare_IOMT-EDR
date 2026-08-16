@@ -1,0 +1,29 @@
+title: Multiple Anomaly Indicators on Same Device (Isolation Trigger)
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f20
+status: experimental
+description: |
+  Detects multiple distinct anomaly indicators from the same IoMT device
+  within a 30-second correlation window, a high-confidence indicator of
+  active compromise warranting immediate network isolation. CVSS v3.1 Base
+  Score: 9.8 (AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) - Critical.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.308(a)(6) (Security Incident Procedures)
+  - Wazuh rule 100220 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'multiple anomaly indicators'
+  condition: selection
+falsepositives:
+  - Coincidental overlap of two independently-approved maintenance activities
+    on the same device within the correlation window
+level: critical
+tags:
+  - attack.impact
+  - healthcare.iomt
+  - healthcare.patient-safety
+  - healthcare.hipaa

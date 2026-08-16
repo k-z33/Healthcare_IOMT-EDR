@@ -1,0 +1,30 @@
+title: Unauthorized Firmware or Update Request
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f06
+status: experimental
+description: |
+  Detects an unrecognized or unauthorized firmware/update request targeting
+  a medical device, indicating a possible supply-chain compromise or
+  malicious firmware push. CVSS v3.1 Base Score: 9.8
+  (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) - Critical.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(c)(1) (Integrity)
+  - Wazuh rule 100206 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'firmware or update request'
+  condition: selection
+falsepositives:
+  - Approved OEM firmware push executed outside the documented maintenance
+    window due to an emergency patch
+level: critical
+tags:
+  - attack.initial_access
+  - attack.t1195
+  - healthcare.iomt
+  - healthcare.patient-safety
+  - healthcare.hipaa

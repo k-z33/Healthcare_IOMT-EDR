@@ -1,0 +1,42 @@
+{
+  "name": "IoMT EDR Coverage - ICS",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "ics-attack",
+  "description": "Coverage map of IoMT EDR Sigma rules (ics-attack)",
+  "techniques": [
+    {
+      "techniqueID": "T0814",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T0816",
+      "score": 1,
+      "comment": "1 rule(s)"
+    },
+    {
+      "techniqueID": "T0836",
+      "score": 3,
+      "comment": "3 rule(s)"
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#66b1ff",
+      "#1a5276"
+    ],
+    "minValue": 0,
+    "maxValue": 3
+  },
+  "legendItems": [
+    {
+      "label": "Covered",
+      "color": "#66b1ff"
+    }
+  ]
+}

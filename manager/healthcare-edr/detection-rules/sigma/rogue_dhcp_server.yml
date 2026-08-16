@@ -1,0 +1,29 @@
+title: Rogue DHCP Server Detected
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f39
+status: experimental
+description: |
+  Detects an unauthorized DHCP server responding on the clinical network, a
+  classic precursor to a man-in-the-middle setup via malicious IP address
+  assignment. CVSS v3.1 Base Score: 8.1
+  (AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N) - High.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(e)(1) (Transmission Security)
+  - Wazuh rule 100239 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'Rogue DHCP server'
+  condition: selection
+falsepositives:
+  - Secondary DHCP server temporarily brought online during planned network
+    infrastructure maintenance
+level: high
+tags:
+  - attack.collection
+  - attack.t1557
+  - healthcare.iomt
+  - healthcare.hipaa

@@ -1,0 +1,25 @@
+{
+  "model": "RandomForestClassifier",
+  "type": "Supervised",
+  "variant": "IoMT (5 classes, 11 features)",
+  "n_estimators": 300,
+  "classes": {
+    "0": "BENIGN",
+    "1": "UNAUTHORIZED_ACCESS",
+    "2": "FIRMWARE_TAMPERING",
+    "3": "DATA_EXFILTRATION",
+    "4": "NETWORK_ANOMALY"
+  },
+  "mitre_map": {
+    "UNAUTHORIZED_ACCESS": "T1078",
+    "FIRMWARE_TAMPERING": "T1542",
+    "DATA_EXFILTRATION": "T1537",
+    "NETWORK_ANOMALY": "T1046"
+  },
+  "f1_cv_mean": 0.995,
+  "f1_cv_std": 0.001,
+  "training_samples": 6000,
+  "test_samples": 1500,
+  "trained_at": "2026-08-08T17:33:45.617062+00:00",
+  "use_case": "Known IoMT threat category classification"
+}

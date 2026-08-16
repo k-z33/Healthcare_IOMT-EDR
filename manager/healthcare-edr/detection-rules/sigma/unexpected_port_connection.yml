@@ -1,0 +1,29 @@
+title: Device Connection on Unexpected Port
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f02
+status: experimental
+description: |
+  Detects an IoMT device establishing a connection on a non-standard port
+  outside expected clinical protocol ports (e.g., DICOM 104, HL7 2575, HTTPS
+  8443), which may indicate protocol tunneling or a covert C2 channel. CVSS
+  v3.1 Base Score: 6.5 (AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N) - Medium.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(e)(1) (Transmission Security)
+  - Wazuh rule 100202 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'unexpected port'
+  condition: selection
+falsepositives:
+  - Vendor maintenance session using a temporary non-standard port with prior
+    change approval
+level: medium
+tags:
+  - attack.command_and_control
+  - attack.t1571
+  - healthcare.iomt
+  - healthcare.hipaa

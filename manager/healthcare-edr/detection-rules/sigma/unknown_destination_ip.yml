@@ -1,0 +1,29 @@
+title: Device Connection to Unknown Destination IP
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f01
+status: experimental
+description: |
+  Detects an IoMT device connecting to a destination IP address outside its
+  known/allow-listed set, which may indicate compromise, misconfiguration,
+  or unauthorized outbound communication (possible C2). CVSS v3.1 Base
+  Score: 6.5 (AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N) - Medium.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.312(e)(1) (Transmission Security)
+  - Wazuh rule 100201 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'unknown destination IP'
+  condition: selection
+falsepositives:
+  - New backend service or PACS/EHR endpoint added without updating the device
+    allow-list
+level: medium
+tags:
+  - attack.command_and_control
+  - attack.t1071
+  - healthcare.iomt
+  - healthcare.hipaa

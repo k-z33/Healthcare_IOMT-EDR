@@ -1,0 +1,72 @@
+MITRE_MAP = {
+    "ransomware":     ("T1486", "Impact",              "Data Encrypted for Impact"),
+    "powershell":      ("T1059", "Execution",            "Command and Scripting Interpreter"),
+    "wmi":             ("T1047", "Execution",            "WMI Execution"),
+    "encoded":         ("T1027", "Defense Evasion",      "Obfuscated Files"),
+    "injection":       ("T1055", "Defense Evasion",      "Process Injection"),
+    "scheduled":       ("T1053", "Persistence",          "Scheduled Task"),
+    "download":        ("T1105", "Command and Control",  "Ingress Tool Transfer"),
+    "user creation":   ("T1136", "Persistence",          "Create Account"),
+    "deletion":        ("T1485", "Impact",               "Data Destruction"),
+    "integrity":       ("T1565", "Impact",               "Data Manipulation"),
+    "login":           ("T1078", "Defense Evasion",      "Valid Accounts"),
+    "office":          ("T1566", "Initial Access",       "Phishing"),
+    "shell":           ("T1059", "Execution",            "Command Shell"),
+    "script":          ("T1059", "Execution",            "Scripting"),
+    "group":           ("T1069", "Discovery",            "Permission Groups Discovery"),
+    "unknown destination ip":  ("T1071",   "Command and Control", "Application Layer Protocol"),
+    "unexpected port":         ("T1571",   "Command and Control", "Non-Standard Port"),
+    "data volume spike":       ("T1030",   "Exfiltration",        "Data Transfer Size Limits"),
+    "off-hour":                ("T1078",   "Defense Evasion",     "Valid Accounts (Anomalous Timing)"),
+    "flooding":                ("T1499",   "Impact",              "Endpoint Denial of Service"),
+    "firmware":                ("T1542",   "Persistence",         "Pre-OS Boot / Firmware Tampering"),
+    "legacy protocol":         ("T1040",   "Discovery",           "Network Sniffing (Plaintext Protocol)"),
+    "default credential":      ("T1078.001","Defense Evasion",    "Default Accounts"),
+    "failed authentication":   ("T1110",   "Credential Access",   "Brute Force"),
+    "brute force":             ("T1110",   "Credential Access",   "Brute Force"),
+    "impersonation":           ("T1557",   "Collection",          "Adversary-in-the-Middle (MAC/IP Spoofing)"),
+    "replay":                  ("T1550",   "Defense Evasion",     "Use Alternate Authentication Material"),
+    "unencrypted phi":         ("T1020",   "Exfiltration",        "Automated Exfiltration (Unencrypted PHI)"),
+    "time sync":               ("T1070.006","Defense Evasion",   "Timestomp"),
+    "cross-segment":           ("T1210",   "Lateral Movement",    "Exploitation of Remote Services"),
+    "infusion pump":           ("T0836",   "Impact (ICS/Medical)","Modify Parameter — Patient Dosing Risk"),
+    "ventilator":              ("T0836",   "Impact (ICS/Medical)","Modify Parameter — Life-Support Risk"),
+    "patient monitor":         ("T0836",   "Impact (ICS/Medical)","Modify Parameter — Vitals Integrity"),
+    "dicom":                   ("T1537",   "Exfiltration",        "Transfer Data to Cloud Account (DICOM/Image Exfil)"),
+    "diversion":                ("T1078",  "Initial Access",      "Valid Accounts — Pharmacy Insider Threat"),
+    "hl7":                     ("T1565",   "Impact",              "Data Manipulation — HL7 Message Tampering"),
+    "reboot":                  ("T1529",   "Impact",              "System Shutdown/Reboot"),
+    "config change":           ("T1562",   "Defense Evasion",     "Impair Defenses — Unauthorized Config Change"),
+    "network scan":            ("T1046",   "Discovery",           "Network Service Discovery"),
+    "rogue device":            ("T1200",   "Initial Access",      "Hardware Additions — Unregistered Device"),
+    "rogue dhcp":              ("T1557",   "Collection",          "Adversary-in-the-Middle — Rogue DHCP"),
+    "zone violation":           ("T1210",  "Lateral Movement",    "Network Segmentation Violation"),
+    "tls validation":           ("T1040",  "Credential Access",   "Transmission Security — Encryption Failure"),
+    "port scan":                ("T1046",  "Discovery",           "Port Scan"),
+    "multiple anomaly":         ("T0836",  "Impact (ICS/Medical)","Correlated Multi-Indicator Device Compromise"),
+}
+
+MITRE_MAP.update({
+    "connection event logged":   ("T1071",    "Command and Control",  "Application Layer Protocol (Device Communication Log)"),
+    "outside normal operating":  ("T1078",    "Defense Evasion",      "Valid Accounts (Anomalous Timing)"),
+    "default or weak credential":("T1078.001","Defense Evasion",      "Default Accounts"),
+    "authentication failed":     ("T1110",    "Credential Access",    "Brute Force"),
+    "without encryption":        ("T1020",    "Exfiltration",         "Automated Exfiltration (Unencrypted PHI)"),
+    "time-sync":                 ("T1070.006","Defense Evasion",      "Timestomp"),
+    "network segment":           ("T1210",    "Lateral Movement",     "Exploitation of Remote Services"),
+    "configuration change":      ("T1562",    "Defense Evasion",      "Impair Defenses — Unauthorized Config Change"),
+    "reconnaissance":            ("T1046",    "Discovery",            "Network Service Discovery"),
+    "arp spoofing":              ("T1557",    "Collection",           "Adversary-in-the-Middle (ARP Spoofing)"),
+    "mitm":                      ("T1557",    "Collection",           "Adversary-in-the-Middle"),
+    "segmentation violation":    ("T1210",    "Lateral Movement",     "Network Segmentation Violation"),
+    "certificate validation":    ("T1040",    "Credential Access",    "Transmission Security — Encryption Failure"),
+    "firewall":                  ("T1046",    "Discovery",            "Network Service Discovery (Firewall Probing)"),
+})
+
+
+def map_mitre(description):
+    d = description.lower()
+    for keyword, (tid, tactic, tech) in MITRE_MAP.items():
+        if keyword in d:
+            return tid, tactic, tech
+    return "T0000", "Unknown", "Unclassified"

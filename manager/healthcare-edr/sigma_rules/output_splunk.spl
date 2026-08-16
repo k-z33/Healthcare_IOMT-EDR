@@ -1,0 +1,11 @@
+rule.description="*impersonation*"
+
+rule.description="*dicom*"
+
+rule.description="*infusion pump*"
+
+rule.description="*failed authentication*"
+
+rule.description="*rogue device*"
+
+rule.description="*ventilator*"

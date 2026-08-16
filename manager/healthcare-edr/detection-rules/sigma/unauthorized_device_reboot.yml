@@ -1,0 +1,30 @@
+title: Unauthorized Device Reboot
+id: 6a1b2c3d-4e5f-4071-8a01-1b2c3d4e5f23
+status: experimental
+description: |
+  Detects a medical device reboot that was not logged as an
+  authorized/scheduled action, which may indicate a deliberate disruption
+  attempt or exploitation of a device vulnerability. CVSS v3.1 Base Score:
+  7.5 (AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H) - High.
+author: Kainat Zahra
+date: 2026/08/12
+references:
+  - HIPAA 45 CFR 164.308(a)(6) (Security Incident Procedures)
+  - Wazuh rule 100223 (iomt_custom_rules.xml / iomt_network_security_rules.xml)
+logsource:
+  category: iomt
+  product: wazuh
+detection:
+  selection:
+    rule.description|contains: 'rebooted without authorization'
+  condition: selection
+falsepositives:
+  - Biomedical engineering reboot performed without updating the change-ticket
+    system in real time
+level: high
+tags:
+  - attack.impact
+  - attack.t0816
+  - healthcare.iomt
+  - healthcare.patient-safety
+  - healthcare.hipaa
