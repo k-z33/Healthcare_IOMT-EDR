@@ -1,4 +1,4 @@
-# 🏥 Healthcare IoMT AI-Driven EDR Platform
+# 🏥 Healthcare IoMT AI-Driven XDR Platform
 
 **Enterprise-grade Endpoint Detection & Response, purpose-built for hospital IoMT networks**
 
